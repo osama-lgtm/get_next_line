@@ -28,27 +28,27 @@ int	check_no_nl(char *line)
 	return (1);
 }
 
+/* Joins s1 and s2 into a new string. s1 is ALWAYS freed (even on failure). */
 char	*merge(char const *s1, char const *s2)
 {
 	char	*s;
 	size_t	i;
 	size_t	j;
 
-	if (!s1 || !s2)
-		return (NULL);
-	i = len((char *)s1);
-	j = len((char *)s2);
-	s = malloc(sizeof(char) * (i + j + 1));
+	s = malloc(sizeof(char) * (len((char *)s1) + len((char *)s2) + 1));
 	if (!s)
+	{
+		free((char *)s1);
 		return (NULL);
+	}
 	i = 0;
-	while (s1[i])
+	while (s1 && s1[i])
 	{
 		s[i] = s1[i];
 		i++;
 	}
 	j = 0;
-	while (s2[j])
+	while (s2 && s2[j])
 	{
 		s[i + j] = s2[j];
 		j++;
@@ -70,6 +70,7 @@ int	len(char *str)
 	return (i);
 }
 
+/* Splits *remaining into the first line (returned) and the rest (kept). */
 char	*seperate(char **remaining)
 {
 	int		i;
@@ -85,9 +86,14 @@ char	*seperate(char **remaining)
 	temp = substr(*remaining, i, len(*remaining) - i);
 	free(*remaining);
 	*remaining = temp;
-	if (!(*remaining) || (*remaining)[0] == '\0')
+	if (!temp)
 	{
-		free(*remaining);
+		free(line);
+		line = NULL;
+	}
+	else if (!line || temp[0] == '\0')
+	{
+		free(temp);
 		*remaining = NULL;
 	}
 	return (line);
