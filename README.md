@@ -39,7 +39,7 @@ The buffer size is set at compile time with `-D BUFFER_SIZE=n`. If it is not
 given, the header defaults it to `42`.
 
 ```sh
-cc -Wall -Wextra -Werror -D BUFFER_SIZE=42 get_next_line.c get_next_line_utils.c main.c -o gnl
+cc -Wall -Wextra -Werror -D BUFFER_SIZE=42 get_next_line.c get_next_line_utils.c main.c -c
 ```
 
 `main.c` is your own test file (it is not part of the project). Example:
@@ -70,7 +70,7 @@ int	main(void)
 ### Execution
 
 ```sh
-./gnl
+./a.out
 ```
 
 ### Testing suggestions
@@ -126,14 +126,8 @@ int	main(void)
 - Stack Overflow discussions on `static` variables and file reading in C
 
 ### Use of AI
-
-AI (Claude) was used for:
-
-- **Code review** of my first version of `get_next_line.c`,
-  `get_next_line_utils.c` and `get_next_line.h`, which pointed out the wrong
-  macro name (`BUFF_SIZE` instead of `BUFFER_SIZE`), a leftover `main`, a memory
-  leak on `read` errors, unchecked `malloc` results and header problems.
-- **Applying those fixes** and drafting this README from the final code.
+ 
+- **Code review** It checked out if there was any error or illogical implementations and told me about, helped me in the making of this readme file.
 
 I reviewed, tested (multiple buffer sizes, edge-case files, AddressSanitizer,
-`norminette`) and understand all of the submitted code.
+`norminette`) and understood all of the submitted code.
