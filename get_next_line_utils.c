@@ -12,25 +12,27 @@
 
 #include "get_next_line.h"
 
-int	check_nl(char *line)
+int	check_no_nl(char *line)
 {
 	int	i;
 
 	i = 0;
+	if (!line)
+		return (0);
 	while (line[i] != '\0')
 	{
 		if (line[i] == '\n')
-			return (1);
+			return (0);
 		i++;
 	}
-	return (0);
+	return (1);
 }
 
 char	*merge(char const *s1, char const *s2)
 {
-	static char	*s;
-	size_t		i;
-	size_t		j;
+	char	*s;
+	size_t	i;
+	size_t	j;
 
 	if (!s1 || !s2)
 		return (NULL);
@@ -40,18 +42,19 @@ char	*merge(char const *s1, char const *s2)
 	if (!s)
 		return (NULL);
 	i = 0;
-	j = 0;
-	while (s1[i] != '\0')
+	while (s1[i])
 	{
 		s[i] = s1[i];
 		i++;
 	}
-	while (s2[j] != '\0')
+	j = 0;
+	while (s2[j])
 	{
 		s[i + j] = s2[j];
 		j++;
 	}
 	s[i + j] = '\0';
+	free((char *)s1);
 	return (s);
 }
 
@@ -60,39 +63,48 @@ int	len(char *str)
 	int	i;
 
 	i = 0;
+	if (!str)
+		return (0);
 	while (str[i] != '\0')
 		i++;
 	return (i);
 }
 
-char *seperate(char **remaining)
+char	*seperate(char **remaining)
 {
-    int     i;
-    char    *line;
-    char    *temp;
-
-    i = 0;
-    while ((*remaining)[i] && (*remaining)[i] != '\n')
-        i++;
-    if ((*remaining)[i] == '\n')
-        i++;
-    line = substr(*remaining, 0, i);
-    temp = substr(*remaining, i, len(*remaining) - i);
-    free(*remaining);
-    *remaining = temp;
-    return (line);
-}
-
-char	*substr(const char *s, unsigned int start, size_t len)
-{
-	char	*sub;
 	int		i;
+	char	*line;
+	char	*temp;
 
 	i = 0;
-	sub = malloc(len + 1);
+	while ((*remaining)[i] && (*remaining)[i] != '\n')
+		i++;
+	if ((*remaining)[i] == '\n')
+		i++;
+	line = substr(*remaining, 0, i);
+	temp = substr(*remaining, i, len(*remaining) - i);
+	free(*remaining);
+	*remaining = temp;
+	if (!(*remaining) || (*remaining)[0] == '\0')
+	{
+		free(*remaining);
+		*remaining = NULL;
+	}
+	return (line);
+}
+
+char	*substr(const char *s, unsigned int start, size_t len_sub)
+{
+	char	*sub;
+	size_t	i;
+
+	if (!s)
+		return (NULL);
+	sub = malloc(len_sub + 1);
 	if (!sub)
 		return (NULL);
-	while (len && s[start + i])
+	i = 0;
+	while (i < len_sub && s[start + i])
 	{
 		sub[i] = s[start + i];
 		i++;
