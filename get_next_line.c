@@ -30,10 +30,11 @@ static char	*ft_read_loop(int fd, char *line, char *temp)
 	bytes_read = 1;
 	while (check_no_nl(line) == 1 && bytes_read != 0)
 	{
-		bytes_read = read(fd, temp, BUFF_SIZE);
+		bytes_read = read(fd, temp, BUFFER_SIZE);
 		if (bytes_read == -1)
 		{
 			free(temp);
+			free(line);
 			return (NULL);
 		}
 		temp[bytes_read] = '\0';
@@ -48,12 +49,12 @@ char	*get_next_line(int fd)
 	static char	*line;
 	char		*temp;
 
-	if (fd < 0 || fd > 1023 || BUFF_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	line = init_line(line);
 	if (!line)
 		return (NULL);
-	temp = malloc(sizeof(char) * (BUFF_SIZE + 1));
+	temp = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!temp)
 		return (NULL);
 	line = ft_read_loop(fd, line, temp);
@@ -65,24 +66,3 @@ char	*get_next_line(int fd)
 	}
 	return (seperate(&line));
 }
-/*
-#include <stdio.h>
-#include <fcntl.h>
-int main()
-{
-        int fd;
-        char *line;
-
-        line = NULL;
-        puts(line);
-        fd = open("hello.txt", O_RDONLY);
-        printf("%s\n", line);
-        // printf("%s", get_next_line(fd));
-        // printf("%s", get_next_line(fd));
-        // printf("%s", get_next_line(fd));
-        // printf("%s", get_next_line(fd));
-        // printf("%s", get_next_line(fd));
-        // printf("%s", get_next_line(fd));
-        // printf("\n");
-        return 0;
-}*/
