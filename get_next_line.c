@@ -12,43 +12,77 @@
 
 #include "get_next_line.h"
 
+static char	*init_line(char *line)
+{
+	if (!line)
+	{
+		line = malloc(1);
+		if (line)
+			line[0] = '\0';
+	}
+	return (line);
+}
+
+static char	*ft_read_loop(int fd, char *line, char *temp)
+{
+	int	bytes_read;
+
+	bytes_read = 1;
+	while (check_no_nl(line) == 1 && bytes_read != 0)
+	{
+		bytes_read = read(fd, temp, BUFF_SIZE);
+		if (bytes_read == -1)
+		{
+			free(temp);
+			return (NULL);
+		}
+		temp[bytes_read] = '\0';
+		line = merge(line, temp);
+	}
+	free(temp);
+	return (line);
+}
+
 char	*get_next_line(int fd)
 {
 	static char	*line;
 	char		*temp;
-	int			i;
 
-	i = 0;
 	if (fd < 0 || fd > 1023 || BUFF_SIZE <= 0)
 		return (NULL);
-	line = malloc((BUFF_SIZE + 1));
-	line[BUFF_SIZE + 1] = '\0';
-	read(fd, line, BUFF_SIZE);
-	temp = malloc(BUFF_SIZE + 1);
-	while (check_nl(line) == 0)
+	line = init_line(line);
+	if (!line)
+		return (NULL);
+	temp = malloc(sizeof(char) * (BUFF_SIZE + 1));
+	if (!temp)
+		return (NULL);
+	line = ft_read_loop(fd, line, temp);
+	if (!line || line[0] == '\0')
 	{
-		read(fd, temp, BUFF_SIZE);
-		temp[BUFF_SIZE + 1] = '\0';
-		line = merge(line, temp);
+		free(line);
+		line = NULL;
+		return (NULL);
 	}
-	free(temp);
-	temp = seperate(&line);
-	return (temp);
+	return (seperate(&line));
 }
-
+/*
 #include <stdio.h>
 #include <fcntl.h>
-int main(void)
+int main()
 {
-    int fd;
+        int fd;
+        char *line;
 
-    fd = open("hello.txt", O_RDONLY);
-    if (fd == -1)
-        return (1);
-    printf("%s",get_next_line(fd));
-    // printf("%s",get_next_line(fd));
-	// printf("%s",get_next_line(fd));
-
-    close(fd);
-    return (0);
-}
+        line = NULL;
+        puts(line);
+        fd = open("hello.txt", O_RDONLY);
+        printf("%s\n", line);
+        // printf("%s", get_next_line(fd));
+        // printf("%s", get_next_line(fd));
+        // printf("%s", get_next_line(fd));
+        // printf("%s", get_next_line(fd));
+        // printf("%s", get_next_line(fd));
+        // printf("%s", get_next_line(fd));
+        // printf("\n");
+        return 0;
+}*/
