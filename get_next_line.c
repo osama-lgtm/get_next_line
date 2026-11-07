@@ -6,7 +6,7 @@
 /*   By: ojamleh <ojamleh@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/04 14:12:47 by ojamleh           #+#    #+#             */
-/*   Updated: 2026/11/04 15:25:03 by ojamleh          ###   ########.fr       */
+/*   Updated: 2026/11/07 16:15:20 by ojamleh          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,18 +46,18 @@ static char	*ft_read_loop(int fd, char *line, char *temp)
 
 char	*get_next_line(int fd)
 {
-	static char	*line;
+	static char	*line[1024];
 	char		*temp;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	line = init_line(line);
-	if (!line)
+	line[fd] = init_line(line[fd]);
+	if (!(line[fd]))
 		return (NULL);
 	temp = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!temp)
 		return (NULL);
-	line = ft_read_loop(fd, line, temp);
+	line[fd] = ft_read_loop(fd, line[fd], temp);
 	if (!line || line[0] == '\0')
 	{
 		free(line);
