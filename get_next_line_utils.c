@@ -28,7 +28,6 @@ int	check_no_nl(char *line)
 	return (1);
 }
 
-/* Joins s1 and s2 into a new string. s1 is ALWAYS freed (even on failure). */
 char	*merge(char const *s1, char const *s2)
 {
 	char	*s;
@@ -70,7 +69,6 @@ int	len(char *str)
 	return (i);
 }
 
-/* Splits *remaining into the first line (returned) and the rest (kept). */
 char	*seperate(char **remaining)
 {
 	int		i;
