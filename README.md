@@ -85,16 +85,16 @@ int	main(void)
 
 **Chosen approach: a static "stash" string plus chunked reads.**
 
-1. A `static char *line` (the "stash") keeps whatever has been read from the
+1. A `static char *line[1024]` (the "stash") keeps whatever has been read from the
    file but not yet returned. Because it is `static`, it survives between
-   calls. `init_line` makes sure it starts as an empty string.
+   calls. `init_line` makes sure it starts as an empty string, the reason it is an array pointer is to solve the bonus part where it should have the ability to read multiple files and remember where it stopped in each file so that when it reads different files repeatedly it remembers where it progressed.
 2. `ft_read_loop` repeatedly calls `read(fd, temp, BUFFER_SIZE)` and appends
    the chunk to the stash (`merge`) **until the stash contains a `\n`**
    (checked by `check_no_nl`, which returns 1 while there is no newline)
    **or `read` returns 0 (end of file)**.
 3. If the stash is empty after reading, there is nothing left: the stash is
    freed and `NULL` is returned.
-4. Otherwise `seperate` scans for the first `\n`, copies everything up to
+4. Otherwise `seperate` scans for the first `\n`, copies everything up to `\n` 
    and including it into a new string (the line that is returned), and copies
    the remainder into a new stash for the next call. The old stash is freed.
 5. If `read` fails (`-1`), or any `malloc` fails, everything allocated is freed,
